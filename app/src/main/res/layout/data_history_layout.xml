@@ -129,10 +129,10 @@
                 android:layout_weight="1"
                 android:text="120000000" />
 
-
         </LinearLayout>
 
 
     </LinearLayout>
+
 
 </LinearLayout>
