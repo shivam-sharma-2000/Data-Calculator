@@ -13,39 +13,14 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.RecyclerView
 import com.example.datacalculator.R.layout.data_usage
+import com.example.datacalculator.helpers.DataHistoryDbHelper
+import com.example.datacalculator.model.DataHistoryModel
 import java.util.*
 
 class MainActivity : AppCompatActivity(){
-
-    private var dataHistoryList: MutableList<DataHistoryModel>? = null
-    private var dataHistoryListAdapter : DataHistoryListAdapter? = null
-
-    private val permission : Button by lazy {
-        findViewById(R.id.get_permission)
-    }
-    private val dataCalculator : Button by lazy {
-        findViewById(R.id.data_calculator)
-    }
-    private val startTimeTV : TextView by lazy {
-        findViewById(R.id.start_time_tv)
-    }
-    private val endTimeTV : TextView by lazy {
-        findViewById(R.id.end_time_tv)
-    }
-    private val startTime : TextView by lazy {
-        findViewById(R.id.start_time)
-    }
-    private val endTime : TextView by lazy {
-        findViewById(R.id.end_time)
-    }
-    private val dataHistoryRecyclerView : RecyclerView by lazy {
-        findViewById(R.id.data_history_recycler_view)
-    }
 
     private val etStartDate : EditText by lazy {
         findViewById(R.id.et_start_date)
@@ -63,6 +38,7 @@ class MainActivity : AppCompatActivity(){
         findViewById(R.id.btn_data_usage)
     }
 
+    private var dbHelper: DataHistoryDbHelper? = null
     private var dateFragment : DatePickerFragment?= null
     private var timeFragment : TimePickerFragment?= null
     private val myDateFormat = MyDateFormat()
@@ -77,16 +53,7 @@ class MainActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         setContentView(data_usage)
 
-//        this.dataHistoryList = mutableListOf()
-//        this.dataHistoryListAdapter = DataHistoryListAdapter(this, dataHistoryList!!)
-//        dataHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
-//        dataHistoryRecyclerView.adapter = dataHistoryListAdapter
-//        startTimeTV.setOnClickListener {
-//            openDateTimePicker(myDateFormat, true)
-//        }
-//        endTimeTV.setOnClickListener {
-//            openDateTimePicker(myDateFormat, false)
-//        }
+        dbHelper = DataHistoryDbHelper(this)
 
         etStartDate.setOnClickListener {
             openDatePicker(myDateFormat, true)
@@ -130,33 +97,20 @@ class MainActivity : AppCompatActivity(){
                     totalBytes += bucket.rxBytes + bucket.txBytes
             }
             Log.i("Mobile Data Usage Bytes", totalBytes.toString())
+            // TODO: Make a dialog box instead of toast
             Toast.makeText(this, "Mobile Data Usage " +
                     "\n$totalBytes Bytes, ${totalBytes/1024.00} KB, ${totalBytes/(1024.00*1024.00)} MB ${totalBytes/(1024.00*1024.00*1024)} GB", Toast.LENGTH_LONG).show()
-//            updateUI(totalBytes)
-//            "%.2f".format(data / 1024.00).toDouble(),
-//            "%.2f".format(data/(1024.00*1024.00)).toDouble(),
-//            "%.2f".format(data/(1024.00*1024.00*1024)).toDouble()
+            updateUI(totalBytes)
             totalBytes = TrafficStats.getTotalRxBytes() + TrafficStats.getTotalTxBytes()
             Log.i("Total Data Usage Bytes (Mobile + Wifi)", totalBytes.toString())
         })
-//        permission.setOnClickListener {
-//            startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
-//        }
     }
-
-//    private fun openDateTimePicker(myDateFormat: MyDateFormat, isStartTime: Boolean){
-//        // Pick Time
-//        timeFragment = TimePickerFragment(myDateFormat, isStartTime, ::timeIsSet)
-//        timeFragment!!.show(supportFragmentManager, "Time Picker")
-//        // Pick Date
-//        dateFragment = DatePickerFragment(myDateFormat)
-//        dateFragment!!.show(supportFragmentManager, "Date Picker")
-//    }
 
     private fun openDatePicker(myDateFormat: MyDateFormat, isStartDate: Boolean){
         dateFragment = DatePickerFragment(myDateFormat, isStartDate, ::dateIsSet)
         dateFragment!!.show(supportFragmentManager, "Date Picker")
     }
+
     private fun dateIsSet(isStartDate: Boolean){
         if(isStartDate) {
             etStartDate.setText(myDateFormat.getDate())
@@ -188,23 +142,26 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-//    private fun updateUI(data: Long) {
-//        // Update the UI here
-//        println("Result: $data")
-//
-//        val dataHistoryModel = DataHistoryModel(
-//            myDateFormat.getMillisToDate(Calendar.getInstance().timeInMillis, "dd-MM-yyyy"),
-//            myDateFormat.getMillisToDate(startTimeInMillis),
-//            myDateFormat.getMillisToDate(endTimeInMillis),
-//            data.toDouble(),
-//            "%.2f".format(data / 1024.00).toDouble(),
-//            "%.2f".format(data/(1024.00*1024.00)).toDouble(),
-//            "%.2f".format(data/(1024.00*1024.00*1024)).toDouble()
-//        )
-//
+    private fun updateUI(data: Long) {
+        // Update the UI here
+        println("Result: $data")
+
+        val dataHistoryModel = DataHistoryModel(
+            myDateFormat.getMillisToDate(Calendar.getInstance().timeInMillis, "dd-MM-yyyy"),
+            myDateFormat.getMillisToDate(Calendar.getInstance().timeInMillis, "hh:mm"),
+            myDateFormat.getMillisToDate(startTimeInMillis),
+            myDateFormat.getMillisToDate(endTimeInMillis),
+            data.toDouble(), // Bytes
+//            "%.2f".format(data / 1024.00).toDouble(), // KB or Kilo-Bytes
+//            "%.2f".format(data/(1024.00*1024.00)).toDouble(), // MB or Mega-Bytes
+//            "%.2f".format(data/(1024.00*1024.00*1024)).toDouble() // GB or Giga-Bytes
+        )
+
+        // TODO: Add data history model object in the DB. and Get the list in the history screen and show.
+        dbHelper?.addUsageHistory(dataHistoryModel)
 //        this.dataHistoryList?.add(dataHistoryModel)
 //        this.dataHistoryListAdapter?.notifyDataSetChanged()
-//    }
+    }
 
     private fun checkPermissionGranted(): Boolean {
 

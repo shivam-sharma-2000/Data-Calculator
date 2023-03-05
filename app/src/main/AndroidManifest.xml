@@ -16,6 +16,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DataCalculator"
         tools:targetApi="31">
+        <meta-data
+            android:name="android.database.SQLiteDatabase.SQLiteDatabaseHook" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait"
