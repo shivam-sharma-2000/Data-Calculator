@@ -19,7 +19,7 @@ class TimePickerFragment(val myDateFormat: MyDateFormat, val isStartTime: Boolea
     }
 
     override fun onTimeSet(p0: TimePicker?, hourOfDay: Int, minute: Int) {
-        myDateFormat.sethour(hourOfDay)
+        myDateFormat.setHour(hourOfDay)
         myDateFormat.setMinutes(minute)
         callBack(isStartTime)
     }

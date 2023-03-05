@@ -12,12 +12,12 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.datacalculator.R.layout.activity_main
+import com.example.datacalculator.R.layout.data_usage
 import java.util.*
 
 class MainActivity : AppCompatActivity(){
@@ -47,36 +47,61 @@ class MainActivity : AppCompatActivity(){
         findViewById(R.id.data_history_recycler_view)
     }
 
+    private val etStartDate : EditText by lazy {
+        findViewById(R.id.et_start_date)
+    }
+    private val etStartTime : EditText by lazy {
+        findViewById(R.id.et_start_time)
+    }
+    private val etEndDate : EditText by lazy {
+        findViewById(R.id.et_end_date)
+    }
+    private val etEndTime : EditText by lazy {
+        findViewById(R.id.et_end_time)
+    }
+    private val btnDataUsage : Button by lazy {
+        findViewById(R.id.btn_data_usage)
+    }
+
     private var dateFragment : DatePickerFragment?= null
     private var timeFragment : TimePickerFragment?= null
     private val myDateFormat = MyDateFormat()
-    private var startTimeInMillis : Long = 0
-    private var endTimeInMillis : Long = 0
+    private var startTimeInMillis: Long = 0
+    private var endTimeInMillis: Long = 0
+    private var startDateVal = ""
+    private var startTimeVal = ""
+    private var endDateVal = ""
+    private var endTimeVal = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(activity_main)
+        setContentView(data_usage)
 
-        if(!checkPermissionGranted())
-        {
-            // Permission not granted, handle accordingly
-            Toast.makeText(this, "You have not provided the required permissions." +
-                    "\nPlease provide the permission to continue", Toast.LENGTH_LONG).show()
-            // TODO: This Toast should be an alert / dialog
-            startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+//        this.dataHistoryList = mutableListOf()
+//        this.dataHistoryListAdapter = DataHistoryListAdapter(this, dataHistoryList!!)
+//        dataHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
+//        dataHistoryRecyclerView.adapter = dataHistoryListAdapter
+//        startTimeTV.setOnClickListener {
+//            openDateTimePicker(myDateFormat, true)
+//        }
+//        endTimeTV.setOnClickListener {
+//            openDateTimePicker(myDateFormat, false)
+//        }
+
+        etStartDate.setOnClickListener {
+            openDatePicker(myDateFormat, true)
+        }
+        etStartTime.setOnClickListener {
+            openTimePicker(myDateFormat, true)
+        }
+        etEndDate.setOnClickListener {
+            openDatePicker(myDateFormat, false)
+        }
+        etEndTime.setOnClickListener {
+            openTimePicker(myDateFormat, false)
         }
 
-        this.dataHistoryList = mutableListOf()
-        this.dataHistoryListAdapter = DataHistoryListAdapter(this, dataHistoryList!!)
-        dataHistoryRecyclerView.layoutManager = LinearLayoutManager(this)
-        dataHistoryRecyclerView.adapter = dataHistoryListAdapter
-        startTimeTV.setOnClickListener {
-            openDateTimePicker(myDateFormat, true)
-        }
-        endTimeTV.setOnClickListener {
-            openDateTimePicker(myDateFormat, false)
-        }
-        dataCalculator.setOnClickListener(View.OnClickListener {
+        btnDataUsage.setOnClickListener(View.OnClickListener {
 
             if (!checkPermissionGranted()) {
                 // Permission not granted, handle accordingly
@@ -85,11 +110,18 @@ class MainActivity : AppCompatActivity(){
                 startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
                 return@OnClickListener
             }
+
+            myDateFormat.setDate(startDateVal)
+            myDateFormat.setTime(startTimeVal)
+            startTimeInMillis = myDateFormat.getDateToMillis()
+
+            myDateFormat.setDate(endDateVal)
+            myDateFormat.setTime(endTimeVal)
+            endTimeInMillis = myDateFormat.getDateToMillis()
+
             val networkStatsManager = this.getSystemService(Context.NETWORK_STATS_SERVICE) as NetworkStatsManager
-            val startTime = startTimeInMillis // start time in milliseconds
-            val endTime = endTimeInMillis // end time in milliseconds
             val networkType = TYPE_MOBILE // network type (e.g. TYPE_MOBILE or TYPE_WIFI)
-            val networkStats = networkStatsManager.querySummary(networkType, null, startTime, endTime)
+            val networkStats = networkStatsManager.querySummary(networkType, null, startTimeInMillis, endTimeInMillis)
             val bucket = NetworkStats.Bucket()
             var totalBytes: Long = if (networkStats.getNextBucket(bucket)) bucket.rxBytes + bucket.txBytes else 0
             while (networkStats.hasNextBucket())
@@ -98,53 +130,81 @@ class MainActivity : AppCompatActivity(){
                     totalBytes += bucket.rxBytes + bucket.txBytes
             }
             Log.i("Mobile Data Usage Bytes", totalBytes.toString())
-            updateUI(totalBytes)
+            Toast.makeText(this, "Mobile Data Usage " +
+                    "\n$totalBytes Bytes, ${totalBytes/1024.00} KB, ${totalBytes/(1024.00*1024.00)} MB ${totalBytes/(1024.00*1024.00*1024)} GB", Toast.LENGTH_LONG).show()
+//            updateUI(totalBytes)
+//            "%.2f".format(data / 1024.00).toDouble(),
+//            "%.2f".format(data/(1024.00*1024.00)).toDouble(),
+//            "%.2f".format(data/(1024.00*1024.00*1024)).toDouble()
             totalBytes = TrafficStats.getTotalRxBytes() + TrafficStats.getTotalTxBytes()
             Log.i("Total Data Usage Bytes (Mobile + Wifi)", totalBytes.toString())
         })
-        permission.setOnClickListener {
-            startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+//        permission.setOnClickListener {
+//            startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+//        }
+    }
+
+//    private fun openDateTimePicker(myDateFormat: MyDateFormat, isStartTime: Boolean){
+//        // Pick Time
+//        timeFragment = TimePickerFragment(myDateFormat, isStartTime, ::timeIsSet)
+//        timeFragment!!.show(supportFragmentManager, "Time Picker")
+//        // Pick Date
+//        dateFragment = DatePickerFragment(myDateFormat)
+//        dateFragment!!.show(supportFragmentManager, "Date Picker")
+//    }
+
+    private fun openDatePicker(myDateFormat: MyDateFormat, isStartDate: Boolean){
+        dateFragment = DatePickerFragment(myDateFormat, isStartDate, ::dateIsSet)
+        dateFragment!!.show(supportFragmentManager, "Date Picker")
+    }
+    private fun dateIsSet(isStartDate: Boolean){
+        if(isStartDate) {
+            etStartDate.setText(myDateFormat.getDate())
+            startDateVal = myDateFormat.getDate()
+        }
+        else
+        {
+            etEndDate.setText(myDateFormat.getDate())
+            endDateVal = myDateFormat.getDate()
         }
     }
 
-    private fun openDateTimePicker(myDateFormat: MyDateFormat, isStartTime: Boolean){
-        // Pick Time
+    private fun openTimePicker(myDateFormat: MyDateFormat, isStartTime: Boolean){
         timeFragment = TimePickerFragment(myDateFormat, isStartTime, ::timeIsSet)
         timeFragment!!.show(supportFragmentManager, "Time Picker")
-        // Pick Date
-        dateFragment = DatePickerFragment(myDateFormat)
-        dateFragment!!.show(supportFragmentManager, "Date Picker")
+
     }
 
     private fun timeIsSet(isStartTime: Boolean){
         if(isStartTime) {
-            startTime.text = myDateFormat.getDate()
-            startTimeInMillis = myDateFormat.getDateToMillis()
+            etStartTime.setText(myDateFormat.getTime())
+            startTimeVal = myDateFormat.getTime()
         }
         else
         {
-            endTime.text = myDateFormat.getDate()
-            endTimeInMillis = myDateFormat.getDateToMillis()
+            etEndTime.setText(myDateFormat.getTime())
+            endTimeVal = myDateFormat.getTime()
+            // endTimeInMillis = myDateFormat.getDateToMillis()
         }
     }
 
-    private fun updateUI(data: Long) {
-        // Update the UI here
-        println("Result: $data")
-
-        val dataHistoryModel = DataHistoryModel(
-            myDateFormat.getMillisToDate(Calendar.getInstance().timeInMillis, "dd-MM-yyyy"),
-            myDateFormat.getMillisToDate(startTimeInMillis),
-            myDateFormat.getMillisToDate(endTimeInMillis),
-            data.toDouble(),
-            "%.2f".format(data / 1024.00).toDouble(),
-            "%.2f".format(data/(1024.00*1024.00)).toDouble(),
-            "%.2f".format(data/(1024.00*1024.00*1024)).toDouble()
-        )
-
-        this.dataHistoryList?.add(dataHistoryModel)
-        this.dataHistoryListAdapter?.notifyDataSetChanged()
-    }
+//    private fun updateUI(data: Long) {
+//        // Update the UI here
+//        println("Result: $data")
+//
+//        val dataHistoryModel = DataHistoryModel(
+//            myDateFormat.getMillisToDate(Calendar.getInstance().timeInMillis, "dd-MM-yyyy"),
+//            myDateFormat.getMillisToDate(startTimeInMillis),
+//            myDateFormat.getMillisToDate(endTimeInMillis),
+//            data.toDouble(),
+//            "%.2f".format(data / 1024.00).toDouble(),
+//            "%.2f".format(data/(1024.00*1024.00)).toDouble(),
+//            "%.2f".format(data/(1024.00*1024.00*1024)).toDouble()
+//        )
+//
+//        this.dataHistoryList?.add(dataHistoryModel)
+//        this.dataHistoryListAdapter?.notifyDataSetChanged()
+//    }
 
     private fun checkPermissionGranted(): Boolean {
 
