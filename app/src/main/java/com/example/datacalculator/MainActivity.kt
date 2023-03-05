@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity(){
             // TODO: Make a dialog box instead of toast
             Toast.makeText(this, "Mobile Data Usage " +
                     "\n$totalBytes Bytes, ${totalBytes/1024.00} KB, ${totalBytes/(1024.00*1024.00)} MB ${totalBytes/(1024.00*1024.00*1024)} GB", Toast.LENGTH_LONG).show()
-            updateUI(totalBytes)
+            storeData(totalBytes)
             totalBytes = TrafficStats.getTotalRxBytes() + TrafficStats.getTotalTxBytes()
             Log.i("Total Data Usage Bytes (Mobile + Wifi)", totalBytes.toString())
         })
@@ -142,25 +142,19 @@ class MainActivity : AppCompatActivity(){
         }
     }
 
-    private fun updateUI(data: Long) {
-        // Update the UI here
-        println("Result: $data")
+    private fun storeData(data: Long) {
+        // Store the Data in the Database
 
         val dataHistoryModel = DataHistoryModel(
-            myDateFormat.getMillisToDate(Calendar.getInstance().timeInMillis, "dd-MM-yyyy"),
-            myDateFormat.getMillisToDate(Calendar.getInstance().timeInMillis, "hh:mm"),
-            myDateFormat.getMillisToDate(startTimeInMillis),
-            myDateFormat.getMillisToDate(endTimeInMillis),
+            myDateFormat.getMillisToDate(Calendar.getInstance().timeInMillis, "dd-MM-yyyy"), // Date
+            myDateFormat.getMillisToDate(Calendar.getInstance().timeInMillis, "hh:mm"), // Time
+            myDateFormat.getMillisToDate(startTimeInMillis), // From
+            myDateFormat.getMillisToDate(endTimeInMillis), // To
             data.toDouble(), // Bytes
-//            "%.2f".format(data / 1024.00).toDouble(), // KB or Kilo-Bytes
-//            "%.2f".format(data/(1024.00*1024.00)).toDouble(), // MB or Mega-Bytes
-//            "%.2f".format(data/(1024.00*1024.00*1024)).toDouble() // GB or Giga-Bytes
         )
 
         // TODO: Add data history model object in the DB. and Get the list in the history screen and show.
         dbHelper?.addUsageHistory(dataHistoryModel)
-//        this.dataHistoryList?.add(dataHistoryModel)
-//        this.dataHistoryListAdapter?.notifyDataSetChanged()
     }
 
     private fun checkPermissionGranted(): Boolean {
