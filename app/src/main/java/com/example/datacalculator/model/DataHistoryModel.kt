@@ -1,5 +1,7 @@
 package com.example.datacalculator.model
 
+import com.example.datacalculator.helpers.BinaryPrefixHelper
+
 class DataHistoryModel {
     var id = 0
     var date: String? = null // date / month / year
@@ -43,6 +45,10 @@ class DataHistoryModel {
 
     fun getBytes(): Double {
         return byte
+    }
+
+    fun getDataUsage(): String? {
+        return BinaryPrefixHelper().toBinaryPrefixes(byte)
     }
 
     fun setId(id: Int) {
