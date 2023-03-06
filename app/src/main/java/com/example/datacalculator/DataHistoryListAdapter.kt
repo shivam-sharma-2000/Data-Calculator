@@ -19,13 +19,13 @@ class DataHistoryListAdapter(private val context: Context, private val items: Li
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
-        holder.date.text = item.date.toString()
-        holder.dataInBytes.text = item.byte.toString()
-        holder.dataInKB.text = item.kiloByte.toString()
-        holder.dataInMB.text = item.megaByte.toString()
-        holder.dataInGB.text = item.gigaByte.toString()
-        holder.from.text = item.from.toString()
-        holder.to.text = item.to.toString()
+        holder.date.text = item.getDate().toString()
+        holder.dataInBytes.text = item.getBytes().toString()
+//        holder.dataInKB.text = item.kiloByte.toString()
+//        holder.dataInMB.text = item.megaByte.toString()
+//        holder.dataInGB.text = item.gigaByte.toString()
+        holder.from.text = item.getFrom().toString()
+        holder.to.text = item.getTo().toString()
     }
 
     override fun getItemCount(): Int {

@@ -3,17 +3,12 @@ package com.example.datacalculator.model
 import com.example.datacalculator.helpers.BinaryPrefixHelper
 
 class DataHistoryModel {
-    var id = 0
-    var date: String? = null // date / month / year
-    var time: String? = null // hh:mm:ss
-    var from: String? = null // 00:00:00
-    var to: String? = null
-    var byte: Double = 0.0
-
-    // TODO: Don't need KB MB and GB. Write logic to convert byte to KB/MB/GB based on the number.
-    var kiloByte: Double = 0.0
-    var megaByte: Double = 0.0
-    var gigaByte: Double = 0.0
+    private var id = 0
+    private var date: String? = null // date / month / year
+    private var time: String? = null // hh:mm:ss
+    private var from: String? = null // 00:00:00
+    private var to: String? = null
+    private var byte: Double = 0.0
 
     constructor() {
         // Empty constructor

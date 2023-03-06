@@ -7,6 +7,21 @@
     android:background="#2A2A2A"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/btn_data_usage2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="56dp"
+        android:layout_marginEnd="24dp"
+        android:backgroundTint="#3D3D3D"
+        android:text="Pull Up Data Usage"
+        android:textSize="12sp"
+        app:cornerRadius="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_end_time" />
+
     <EditText
         android:id="@+id/et_start_date"
         android:layout_width="0dp"
@@ -193,6 +208,22 @@
         android:textSize="12sp"
         app:cornerRadius="50dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_end_time" />
+
+    <Button
+        android:id="@+id/btn_show_data_usage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="128dp"
+        android:layout_marginEnd="24dp"
+        android:backgroundTint="#3D3D3D"
+        android:text="Get Data Usage"
+        android:textSize="12sp"
+        app:cornerRadius="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/et_end_time" />
 </androidx.constraintlayout.widget.ConstraintLayout>

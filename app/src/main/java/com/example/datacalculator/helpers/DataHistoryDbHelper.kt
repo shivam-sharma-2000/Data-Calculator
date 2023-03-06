@@ -50,8 +50,8 @@ class DataHistoryDbHelper(context: Context?) :
                 userActivity.setDate(cursor.getString(1))
                 userActivity.setTime(cursor.getString(2))
                 userActivity.setFrom(cursor.getString(3))
-                userActivity.setTo(cursor.getString(3))
-                userActivity.setBytes(cursor.getString(3).toDouble())
+                userActivity.setTo(cursor.getString(4))
+                userActivity.setBytes(cursor.getString(5).toDouble())
                 dataHistoryList.add(userActivity)
             } while (cursor.moveToNext())
         }

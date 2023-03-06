@@ -37,6 +37,9 @@ class MainActivity : AppCompatActivity(){
     private val btnDataUsage : Button by lazy {
         findViewById(R.id.btn_data_usage)
     }
+    private val btnShowDataUsage : Button by lazy {
+        findViewById(R.id.btn_show_data_usage)
+    }
 
     private var dbHelper: DataHistoryDbHelper? = null
     private var dateFragment : DatePickerFragment?= null
@@ -66,6 +69,16 @@ class MainActivity : AppCompatActivity(){
         }
         etEndTime.setOnClickListener {
             openTimePicker(myDateFormat, false)
+        }
+
+        btnShowDataUsage.setOnClickListener {
+            val a = dbHelper!!.getDataHistoryList()
+            for (b in a) {
+                Log.i(
+                    "Data Usage",
+                    "Date = ${b.getDate().toString()}Data Usage = ${b.getDataUsage().toString()}"
+                )
+            }
         }
 
         btnDataUsage.setOnClickListener(View.OnClickListener {
@@ -138,7 +151,6 @@ class MainActivity : AppCompatActivity(){
         {
             etEndTime.setText(myDateFormat.getTime())
             endTimeVal = myDateFormat.getTime()
-            // endTimeInMillis = myDateFormat.getDateToMillis()
         }
     }
 
