@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.datacalculator.R.layout.data_usage
 import com.example.datacalculator.helpers.DataHistoryDbHelper
+import com.example.datacalculator.helpers.DateFormatHelper
 import com.example.datacalculator.model.DataHistoryModel
 import java.util.*
 
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity(){
     private var dbHelper: DataHistoryDbHelper? = null
     private var dateFragment : DatePickerFragment?= null
     private var timeFragment : TimePickerFragment?= null
-    private val myDateFormat = MyDateFormat()
+    private val dateFormatHelper = DateFormatHelper()
     private var startTimeInMillis: Long = 0
     private var endTimeInMillis: Long = 0
     private var startDateVal = ""
@@ -59,16 +60,16 @@ class MainActivity : AppCompatActivity(){
         dbHelper = DataHistoryDbHelper(this)
 
         etStartDate.setOnClickListener {
-            openDatePicker(myDateFormat, true)
+            openDatePicker(dateFormatHelper, true)
         }
         etStartTime.setOnClickListener {
-            openTimePicker(myDateFormat, true)
+            openTimePicker(dateFormatHelper, true)
         }
         etEndDate.setOnClickListener {
-            openDatePicker(myDateFormat, false)
+            openDatePicker(dateFormatHelper, false)
         }
         etEndTime.setOnClickListener {
-            openTimePicker(myDateFormat, false)
+            openTimePicker(dateFormatHelper, false)
         }
 
         btnShowDataUsage.setOnClickListener {
@@ -91,13 +92,13 @@ class MainActivity : AppCompatActivity(){
                 return@OnClickListener
             }
 
-            myDateFormat.setDate(startDateVal)
-            myDateFormat.setTime(startTimeVal)
-            startTimeInMillis = myDateFormat.getDateToMillis()
+            dateFormatHelper.setDate(startDateVal)
+            dateFormatHelper.setTime(startTimeVal)
+            startTimeInMillis = dateFormatHelper.getDateToMillis()
 
-            myDateFormat.setDate(endDateVal)
-            myDateFormat.setTime(endTimeVal)
-            endTimeInMillis = myDateFormat.getDateToMillis()
+            dateFormatHelper.setDate(endDateVal)
+            dateFormatHelper.setTime(endTimeVal)
+            endTimeInMillis = dateFormatHelper.getDateToMillis()
 
             val networkStatsManager = this.getSystemService(Context.NETWORK_STATS_SERVICE) as NetworkStatsManager
             val networkType = TYPE_MOBILE // network type (e.g. TYPE_MOBILE or TYPE_WIFI)
@@ -119,38 +120,38 @@ class MainActivity : AppCompatActivity(){
         })
     }
 
-    private fun openDatePicker(myDateFormat: MyDateFormat, isStartDate: Boolean){
-        dateFragment = DatePickerFragment(myDateFormat, isStartDate, ::dateIsSet)
+    private fun openDatePicker(dateFormatHelper: DateFormatHelper, isStartDate: Boolean){
+        dateFragment = DatePickerFragment(dateFormatHelper, isStartDate, ::dateIsSet)
         dateFragment!!.show(supportFragmentManager, "Date Picker")
     }
 
     private fun dateIsSet(isStartDate: Boolean){
         if(isStartDate) {
-            etStartDate.setText(myDateFormat.getDate())
-            startDateVal = myDateFormat.getDate()
+            etStartDate.setText(dateFormatHelper.getDate())
+            startDateVal = dateFormatHelper.getDate()
         }
         else
         {
-            etEndDate.setText(myDateFormat.getDate())
-            endDateVal = myDateFormat.getDate()
+            etEndDate.setText(dateFormatHelper.getDate())
+            endDateVal = dateFormatHelper.getDate()
         }
     }
 
-    private fun openTimePicker(myDateFormat: MyDateFormat, isStartTime: Boolean){
-        timeFragment = TimePickerFragment(myDateFormat, isStartTime, ::timeIsSet)
+    private fun openTimePicker(dateFormatHelper: DateFormatHelper, isStartTime: Boolean){
+        timeFragment = TimePickerFragment(dateFormatHelper, isStartTime, ::timeIsSet)
         timeFragment!!.show(supportFragmentManager, "Time Picker")
 
     }
 
     private fun timeIsSet(isStartTime: Boolean){
         if(isStartTime) {
-            etStartTime.setText(myDateFormat.getTime())
-            startTimeVal = myDateFormat.getTime()
+            etStartTime.setText(dateFormatHelper.getTime())
+            startTimeVal = dateFormatHelper.getTime()
         }
         else
         {
-            etEndTime.setText(myDateFormat.getTime())
-            endTimeVal = myDateFormat.getTime()
+            etEndTime.setText(dateFormatHelper.getTime())
+            endTimeVal = dateFormatHelper.getTime()
         }
     }
 
@@ -158,10 +159,10 @@ class MainActivity : AppCompatActivity(){
         // Store the Data in the Database
 
         val dataHistoryModel = DataHistoryModel(
-            myDateFormat.getMillisToDate(Calendar.getInstance().timeInMillis, "dd-MM-yyyy"), // Date
-            myDateFormat.getMillisToDate(Calendar.getInstance().timeInMillis, "hh:mm"), // Time
-            myDateFormat.getMillisToDate(startTimeInMillis), // From
-            myDateFormat.getMillisToDate(endTimeInMillis), // To
+            dateFormatHelper.getMillisToDate(Calendar.getInstance().timeInMillis, "dd-MM-yyyy"), // Date
+            dateFormatHelper.getMillisToDate(Calendar.getInstance().timeInMillis, "hh:mm"), // Time
+            dateFormatHelper.getMillisToDate(startTimeInMillis), // From
+            dateFormatHelper.getMillisToDate(endTimeInMillis), // To
             data.toDouble(), // Bytes
         )
 

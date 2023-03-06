@@ -5,9 +5,10 @@ import android.app.Dialog
 import android.os.Bundle
 import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
+import com.example.datacalculator.helpers.DateFormatHelper
 import java.util.*
 
-class DatePickerFragment(val myDateFormat: MyDateFormat, val isStartDate: Boolean, val callBack: (isStartDate: Boolean) -> Unit) : DialogFragment(), DatePickerDialog.OnDateSetListener {
+class DatePickerFragment(private val dateFormatHelper: DateFormatHelper, private val isStartDate: Boolean, val callBack: (isStartDate: Boolean) -> Unit) : DialogFragment(), DatePickerDialog.OnDateSetListener {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val calendar = Calendar.getInstance()
@@ -18,9 +19,9 @@ class DatePickerFragment(val myDateFormat: MyDateFormat, val isStartDate: Boolea
     }
 
     override fun onDateSet(p0: DatePicker?, year: Int, month: Int, dayOfMonth: Int) {
-        myDateFormat.setYear(year)
-        myDateFormat.setDay(dayOfMonth)
-        myDateFormat.setMonth(month + 1)
+        dateFormatHelper.setYear(year)
+        dateFormatHelper.setDay(dayOfMonth)
+        dateFormatHelper.setMonth(month + 1)
         callBack(isStartDate)
     }
 }

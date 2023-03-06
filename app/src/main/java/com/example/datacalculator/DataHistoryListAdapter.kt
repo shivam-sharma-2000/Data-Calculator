@@ -21,9 +21,6 @@ class DataHistoryListAdapter(private val context: Context, private val items: Li
         val item = items[position]
         holder.date.text = item.getDate().toString()
         holder.dataInBytes.text = item.getBytes().toString()
-//        holder.dataInKB.text = item.kiloByte.toString()
-//        holder.dataInMB.text = item.megaByte.toString()
-//        holder.dataInGB.text = item.gigaByte.toString()
         holder.from.text = item.getFrom().toString()
         holder.to.text = item.getTo().toString()
     }
@@ -33,9 +30,6 @@ class DataHistoryListAdapter(private val context: Context, private val items: Li
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val dataInKB: TextView = itemView.findViewById(R.id.data_in_KB)
-        val dataInMB: TextView = itemView.findViewById(R.id.data_in_MB)
-        val dataInGB: TextView = itemView.findViewById(R.id.data_in_GB)
         val dataInBytes: TextView = itemView.findViewById(R.id.data_in_bytes)
         val date: TextView = itemView.findViewById(R.id.date)
         val from: TextView = itemView.findViewById(R.id.text_view_duration_from)

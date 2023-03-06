@@ -1,8 +1,8 @@
-package com.example.datacalculator
+package com.example.datacalculator.helpers
 
 import java.text.SimpleDateFormat
 
-class MyDateFormat {
+class DateFormatHelper {
 
     private var year:Int?= 0
     private var month:Int?= 0

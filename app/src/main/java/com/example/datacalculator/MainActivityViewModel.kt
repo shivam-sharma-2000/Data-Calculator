@@ -1,18 +1,12 @@
 package com.example.datacalculator
 
-import android.content.Context
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.datacalculator.helpers.DateFormatHelper
 
 class MainActivityViewModel() : ViewModel() {
 
-    val myDateFormat = MyDateFormat()
+    val dateFormatHelper = DateFormatHelper()
     var string = MutableLiveData<String>().apply {
         value = ""
     }
