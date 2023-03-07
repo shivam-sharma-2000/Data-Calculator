@@ -40,7 +40,7 @@ class DataHistoryDbHelper(context: Context?) :
 
     fun getDataHistoryList() : List<DataHistoryModel> {
         val dataHistoryList: MutableList<DataHistoryModel> = ArrayList()
-        val selectQuery = "SELECT * FROM $TABLE_NAME"
+        val selectQuery = "SELECT * FROM $TABLE_NAME ORDER BY $COLUMN_DATE DESC, $COLUMN_TIME DESC"
         val db = this.writableDatabase
         val cursor: Cursor = db.rawQuery(selectQuery, null)
         if (cursor.moveToFirst()) {

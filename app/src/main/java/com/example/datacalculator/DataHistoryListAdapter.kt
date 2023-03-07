@@ -20,7 +20,7 @@ class DataHistoryListAdapter(private val context: Context, private val items: Li
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         holder.date.text = item.getDate().toString()
-        holder.dataInBytes.text = item.getBytes().toString()
+        holder.data.text = item.getDataUsage().toString()
         holder.from.text = item.getFrom().toString()
         holder.to.text = item.getTo().toString()
     }
@@ -30,7 +30,7 @@ class DataHistoryListAdapter(private val context: Context, private val items: Li
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val dataInBytes: TextView = itemView.findViewById(R.id.data_in_bytes)
+        val data: TextView = itemView.findViewById(R.id.data)
         val date: TextView = itemView.findViewById(R.id.date)
         val from: TextView = itemView.findViewById(R.id.text_view_duration_from)
         val to: TextView = itemView.findViewById(R.id.text_view_duration_to)

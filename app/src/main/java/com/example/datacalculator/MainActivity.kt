@@ -73,13 +73,8 @@ class MainActivity : AppCompatActivity(){
         }
 
         btnShowDataUsage.setOnClickListener {
-            val a = dbHelper!!.getDataHistoryList()
-            for (b in a) {
-                Log.i(
-                    "Data Usage",
-                    "Date = ${b.getDate().toString()}Data Usage = ${b.getDataUsage().toString()}"
-                )
-            }
+            val intent = Intent(this, DataHistoryActivity::class.java)
+            startActivity(intent)
         }
 
         btnDataUsage.setOnClickListener(View.OnClickListener {
