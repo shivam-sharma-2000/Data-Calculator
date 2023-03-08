@@ -10,7 +10,7 @@ import com.example.datacalculator.model.DataHistoryModel
 class DataHistoryDbHelper(context: Context?) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onCreate(db: SQLiteDatabase) {
-        val CREATE_USER_ACTIVITY_TABLE = ("CREATE TABLE " + TABLE_NAME + "("
+        db.execSQL("CREATE TABLE " + TABLE_NAME + "("
                 + COLUMN_ID + " INTEGER PRIMARY KEY,"
                 + COLUMN_DATE + " TEXT,"
                 + COLUMN_TIME + " TEXT,"
@@ -18,11 +18,10 @@ class DataHistoryDbHelper(context: Context?) :
                 + COLUMN_TO + " TEXT,"
                 + COLUMN_BYTES + " INTEGER"
                 + ")")
-        db.execSQL(CREATE_USER_ACTIVITY_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME)
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME")
         onCreate(db)
     }
 
